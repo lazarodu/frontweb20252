@@ -1,6 +1,7 @@
 import { FindVinylRecord } from '../../../domain/use-cases/FindVinylRecord';
 import { RegisterVinylRecord } from '../../../domain/use-cases/RegisterVinylRecord';
 import { MockVinylRecordRepository } from '../../../infra/mocks/MockVinylRecordRepository';
+import { MockUserRepository } from '../../../infra/mocks/MockUserRepository';
 
 describe('FindVinylRecord', () => {
   it('should find a vinyl record by id', async () => {
@@ -18,8 +19,9 @@ describe('FindVinylRecord', () => {
     });
 
     const foundRecord = await findVinylRecord.execute({ id: record.id });
+    const user = await MockUserRepository.getInstance().findById('user-1');
 
-    expect(foundRecord).toBe(record);
+    expect(foundRecord).toEqual({ ...record, user });
   });
 
   it('should return null if the record is not found', async () => {

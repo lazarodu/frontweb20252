@@ -1,5 +1,6 @@
 import { RegisterVinylRecord } from '../../../domain/use-cases/RegisterVinylRecord';
 import { MockVinylRecordRepository } from '../../../infra/mocks/MockVinylRecordRepository';
+import { MockUserRepository } from '../../../infra/mocks/MockUserRepository';
 
 describe('RegisterVinylRecord', () => {
   it('should register a new vinyl record', async () => {
@@ -20,6 +21,8 @@ describe('RegisterVinylRecord', () => {
     expect(record.album.value).toBe('Abbey Road');
 
     const foundRecord = await vinylRecordRepository.findById(record.id);
-    expect(foundRecord).toBe(record);
+    const user = await MockUserRepository.getInstance().findById('user-1');
+
+    expect(foundRecord).toEqual({ ...record, user });
   });
 });
