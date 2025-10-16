@@ -11,11 +11,10 @@ export const SHeader = styled.header`
     justify-content: space-between;
     border-bottom: 0.5rem solid ${colors.secondary};
     height: 5rem;
-
     img {
-        padding: 0.5rem;
+        padding: 0.3rem;
+        height: 4.5rem;
     }
-
     input {
         display: none;
     }

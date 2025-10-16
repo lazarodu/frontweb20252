@@ -1,9 +1,10 @@
+import { SFooter } from "./styles";
 
 
 export function Footer() {
     return (
-        <footer className="container">
+        <SFooter>
             @copyleft
-        </footer>
+        </SFooter>
     )
 }
