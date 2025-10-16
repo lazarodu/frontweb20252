@@ -41,9 +41,16 @@ export default function VinylsPage() {
         fetchRecords()
     }, [])
 
-    const handleDelete = (id: string) => {
+    const handleDelete = async (id: string) => {
         if (confirm('Tem certeza que deseja excluir este vinil?')) {
-            setVinyls(vinyls.filter(v => v.id !== id));
+            // setVinyls(vinyls.filter(v => v.id !== id));
+            try {
+                await vinylRecordUseCases.deleteVinylRecord.execute({ id })
+                await fetchRecords()
+                toast.success("Vinil apagado!")
+            } catch (error) {
+                toast.error(String(error))
+            }
         }
     };
 
@@ -62,10 +69,10 @@ export default function VinylsPage() {
         if (editingVinyl) { // Editing existing vinyl
             try {
                 await vinylRecordUseCases.updateVinylRecord.execute({
-                        band: formData.band, album: formData.album, year: formData.year,
-                        numberOfTracks: formData.numberOfTracks, photoUrl: formData.photo,
-                        id: formData.id
-                    })
+                    band: formData.band, album: formData.album, year: formData.year,
+                    numberOfTracks: formData.numberOfTracks, photoUrl: formData.photo,
+                    id: formData.id
+                })
                 await fetchRecords()
                 toast.success("Vinil Atualizado!")
             } catch (error) {
@@ -82,7 +89,7 @@ export default function VinylsPage() {
                         userId: user?.id
                     })
                     await fetchRecords()
-                    toast.success("Vinil Atualizado!")
+                    toast.success("Vinil Cadastrado!")
                 }
             } catch (error) {
                 toast.error(String(error))

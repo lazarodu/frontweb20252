@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useState, useContext, ReactNode } from 'react';
-import { makeUserUseCases } from '../core/factories/makeUserUseCases';
+import { makeUserUseCases } from '@/core/factories/makeUserUseCases';
 import { User } from '@/core/domain/entities/User';
 
 
@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, pass: string) => {
     console.log(email, pass)
-    const foundUser = await userUseCases.loginUser.execute({email, password: pass});
+    const foundUser = await userUseCases.loginUser.execute({ email, password: pass });
     if (foundUser) {
       setUser(foundUser);
       return true;
@@ -36,11 +36,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (name: string, email: string, pass: string) => {
-    const existingUser = await userUseCases.findUserByEmail.execute({email})
+    const existingUser = await userUseCases.findUserByEmail.execute({ email })
     if (existingUser) {
       return false; // User already exists
     }
-    await userUseCases.registerUser.execute({name, email, password: pass})
+    await userUseCases.registerUser.execute({ name, email, password: pass })
     return true;
   };
 

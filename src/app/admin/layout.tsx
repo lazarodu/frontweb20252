@@ -9,7 +9,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const router = useRouter();
 
     useEffect(() => {
-        console.log(user)
         if (user === null) {
             router.push('/login');
         }
