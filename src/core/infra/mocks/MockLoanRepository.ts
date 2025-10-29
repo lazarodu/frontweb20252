@@ -1,5 +1,6 @@
 import { ILoanRepository } from '../../domain/repositories/ILoanRepository';
 import { Loan } from '../../domain/entities/Loan';
+import { MockVinylRecordRepository } from './MockVinylRecordRepository';
 
 export class MockLoanRepository implements ILoanRepository {
   private static instance: MockLoanRepository;
@@ -23,7 +24,15 @@ export class MockLoanRepository implements ILoanRepository {
   }
 
   async findByUserId(userId: string): Promise<Loan[]> {
-    return this.loans.filter(loan => loan.userId === userId);
+    const userLoans = this.loans.filter(loan => loan.userId === userId);
+    const vinylRecordRepository = MockVinylRecordRepository.getInstance();
+    const loansWithVinyl = await Promise.all(
+      userLoans.map(async (loan) => {
+        const vinylRecord = await vinylRecordRepository.findById(loan.vinylRecordId);
+        return { ...loan, vinylRecord };
+      })
+    );
+    return loansWithVinyl;
   }
 
   async findCurrentLoanOfRecord(vinylRecordId: string): Promise<Loan | null> {

@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useState, useContext, ReactNode } from 'react';
+import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { makeUserUseCases } from '@/core/factories/makeUserUseCases';
 import { User } from '@/core/domain/entities/User';
 
@@ -21,11 +21,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const userUseCases = makeUserUseCases();
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const login = async (email: string, pass: string) => {
-    console.log(email, pass)
     const foundUser = await userUseCases.loginUser.execute({ email, password: pass });
     if (foundUser) {
+      const {id, email, name} = foundUser
       setUser(foundUser);
+      localStorage.setItem('user', JSON.stringify({id, email, name}));
       return true;
     }
     return false;
@@ -33,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('user');
   };
 
   const register = async (name: string, email: string, pass: string) => {

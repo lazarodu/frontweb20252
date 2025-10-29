@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import Detalhes from '@/app/detalhes/[id]/page';
 import { makeVinylRecordUseCases } from '@/core/factories/makeVinylRecordUseCases';
+import { useAuth } from '@/context/AuthContext';
 
 jest.mock('@/core/factories/makeVinylRecordUseCases');
+jest.mock('@/context/AuthContext');
 
 describe('Detalhes', () => {
   it('should render the vinyl record details', async () => {
@@ -19,8 +21,11 @@ describe('Detalhes', () => {
     (makeVinylRecordUseCases as jest.Mock).mockReturnValue({
       findVinylRecord: mockFindVinylRecord,
     });
+    (useAuth as jest.Mock).mockReturnValue({ user: { id: 'user-1' } });
 
-    render(await Detalhes({ params: { id: '1' } }));
+    render(<Detalhes params={{ id: '1' }} />);
+
+    await screen.findByText('Banda AC/DC');
 
     expect(screen.getByText('Banda AC/DC')).toBeInTheDocument();
     expect(screen.getByText('Álbum: Back in Black')).toBeInTheDocument();

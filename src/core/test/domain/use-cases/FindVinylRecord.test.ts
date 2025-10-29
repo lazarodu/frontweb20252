@@ -18,7 +18,7 @@ describe('FindVinylRecord', () => {
       userId: 'user-1'
     });
 
-    const foundRecord = await findVinylRecord.execute({ id: record.id });
+    const foundRecord = await findVinylRecord.execute(record.id);
     const user = await MockUserRepository.getInstance().findById('user-1');
 
     expect(foundRecord).toEqual({ ...record, user });

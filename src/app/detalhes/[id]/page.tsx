@@ -1,25 +1,66 @@
+'use client'
+
 import { SMainDetalhes } from "@/components/MainDetalhes/styles";
 import acdcg from "@/assets/acdcg.png"
 import Image from "next/image";
 import Link from "next/link";
 import { makeVinylRecordUseCases } from "@/core/factories/makeVinylRecordUseCases";
+import { makeLoanUseCases } from "@/core/factories/makeLoanUseCases";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
+import { VinylRecord } from "@/core/domain/entities/VinylRecord";
+import { useEffect, useState } from "react";
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
-export default async function Detalhes({ params: id }: { params: { id: string } }) {
+export default function Detalhes() {
+    const params = useParams();
+    const id = String(params.id)
+    const router = useRouter()
+    const [record, setRecord] = useState<VinylRecord | null>(null);
     const vinylRecordUseCases = makeVinylRecordUseCases();
-    const records = await vinylRecordUseCases.findVinylRecord.execute(id)
+    const loanUseCases = makeLoanUseCases();
+    const { user } = useAuth();
+
+    useEffect(() => {
+        async function fetchRecord() {
+            const fetchedRecord = await vinylRecordUseCases.findVinylRecord.execute(id);
+            setRecord(fetchedRecord);
+        }
+        fetchRecord();
+    }, [id]);
+
+    const handleBorrow = async () => {
+        if (!user) {
+            toast.error("Você precisa estar logado para pedir um vinil emprestado.");
+            return;
+        }
+        if (record) {
+            try {
+                await loanUseCases.borrowVinylRecord.execute({ userId: user.id, vinylRecordId: record.id });
+                toast.success("Vinil emprestado com sucesso!");
+                router.push('/admin/loans')
+            } catch (error) {
+                toast.error(String(error));
+            }
+        }
+    };
+
     return (
         <SMainDetalhes>
             <section>
                 <Image src={acdcg} alt="Vinil ACDC" />
                 <aside>
-                    {records &&
+                    {record &&
                         <>
-                            <h4>Banda {records.band.value}</h4>
-                            <h5>Álbum: {records.album.value}</h5>
-                            <h5>Ano: {records.year}</h5>
-                            <h5>Músicas: {records.numberOfTracks}</h5>
+                            <h4>Banda {record.band.value}</h4>
+                            <h5>Álbum: {record.album.value}</h5>
+                            <h5>Ano: {record.year}</h5>
+                            <h5>Músicas: {record.numberOfTracks}</h5>
 
-                            <p>Proprietário: {records.user?.name.value}</p>
+                            <p>Proprietário: {record.user?.name.value}</p>
+                            <Button onClick={handleBorrow}>Pedir Emprestado</Button>
                             <Link href="/">voltar</Link>
                         </>
                     }

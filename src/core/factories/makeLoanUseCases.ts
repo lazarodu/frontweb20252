@@ -22,5 +22,8 @@ export function makeLoanUseCases() {
   return {
     borrowVinylRecord,
     returnVinylRecord,
+    findLoansByUser: {
+      execute: async (params: { userId: string }) => loanRepository.findByUserId(params.userId)
+    }
   };
 }

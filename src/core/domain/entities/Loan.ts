@@ -1,10 +1,13 @@
+import { VinylRecord } from './VinylRecord';
+
 export class Loan {
   private constructor(
     readonly id: string,
     readonly userId: string,
     readonly vinylRecordId: string,
     readonly loanDate: Date,
-    readonly returnDate?: Date
+    readonly returnDate?: Date,
+    readonly vinylRecord?: VinylRecord
   ) {}
 
   static create(
@@ -12,9 +15,10 @@ export class Loan {
     userId: string,
     vinylRecordId: string,
     loanDate: Date,
-    returnDate?: Date
+    returnDate?: Date,
+    vinylRecord?: VinylRecord
   ): Loan {
-    return new Loan(id, userId, vinylRecordId, loanDate, returnDate);
+    return new Loan(id, userId, vinylRecordId, loanDate, returnDate, vinylRecord);
   }
 
   return(): Loan {
