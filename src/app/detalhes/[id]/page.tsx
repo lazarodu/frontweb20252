@@ -11,12 +11,11 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { VinylRecord } from "@/core/domain/entities/VinylRecord";
 import { useEffect, useState } from "react";
-import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function Detalhes() {
     const params = useParams();
-    const id = String(params.id)
+    const id = String(params.id); // Garante que é uma string
     const router = useRouter()
     const [record, setRecord] = useState<VinylRecord | null>(null);
     const vinylRecordUseCases = makeVinylRecordUseCases();
@@ -47,23 +46,23 @@ export default function Detalhes() {
         }
     };
 
+    if (!record) {
+        return <SMainDetalhes><p>Carregando...</p></SMainDetalhes>;
+    }
+
     return (
         <SMainDetalhes>
             <section>
                 <Image src={acdcg} alt="Vinil ACDC" />
                 <aside>
-                    {record &&
-                        <>
-                            <h4>Banda {record.band.value}</h4>
-                            <h5>Álbum: {record.album.value}</h5>
-                            <h5>Ano: {record.year}</h5>
-                            <h5>Músicas: {record.numberOfTracks}</h5>
+                    <h4>Banda {record.band.value}</h4>
+                    <h5>Álbum: {record.album.value}</h5>
+                    <h5>Ano: {record.year}</h5>
+                    <h5>Músicas: {record.numberOfTracks}</h5>
 
-                            <p>Proprietário: {record.user?.name.value}</p>
-                            <Button onClick={handleBorrow}>Pedir Emprestado</Button>
-                            <Link href="/">voltar</Link>
-                        </>
-                    }
+                    <p>Proprietário: {record.user?.name.value}</p>
+                    <Button onClick={handleBorrow}>Emprestar</Button>
+                    <Link href="/">voltar</Link>
                 </aside>
             </section>
         </SMainDetalhes>
