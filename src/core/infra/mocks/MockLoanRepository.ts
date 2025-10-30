@@ -6,7 +6,7 @@ export class MockLoanRepository implements ILoanRepository {
   private static instance: MockLoanRepository;
   private loans: Loan[] = [];
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): MockLoanRepository {
     if (!MockLoanRepository.instance) {
@@ -29,7 +29,8 @@ export class MockLoanRepository implements ILoanRepository {
     const loansWithVinyl = await Promise.all(
       userLoans.map(async (loan) => {
         const vinylRecord = await vinylRecordRepository.findById(loan.vinylRecordId);
-        return { ...loan, vinylRecord };
+        Object.assign(loan, { vinylRecord });
+        return loan;
       })
     );
     return loansWithVinyl;
