@@ -1,7 +1,7 @@
 import type { Config } from 'jest'
 import nextJest from 'next/jest.js'
 import { pathsToModuleNameMapper } from 'ts-jest'
-import { compilerOptions } from './tsconfig.json'
+import tsconfig from './tsconfig.json' with { type: 'json' }
 
 const createJestConfig = nextJest({
   // Caminho do app Next para carregar next.config.js e variáveis .env
@@ -22,7 +22,7 @@ const customJestConfig: Config = {
 
   // Mapeamento de aliases (ajuste conforme seu tsconfig.json)
   // Se usar paths no tsconfig, considere gerar via pathsToModuleNameMapper
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
+  moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
     prefix: '<rootDir>/',
   }),
 
