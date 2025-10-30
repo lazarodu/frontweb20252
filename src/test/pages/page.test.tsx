@@ -5,6 +5,7 @@ import { makeVinylRecordUseCases } from '@/core/factories/makeVinylRecordUseCase
 jest.mock('@/core/factories/makeVinylRecordUseCases');
 
 describe('Home', () => {
+
   it('should render the vinyl records', async () => {
     const mockFindAllVinylRecord = {
       execute: jest.fn().mockResolvedValue([
