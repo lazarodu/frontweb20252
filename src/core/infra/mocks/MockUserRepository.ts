@@ -3,6 +3,7 @@ import { User } from '../../domain/entities/User';
 import { Name } from '../../domain/value-objects/Name';
 import { Email } from '../../domain/value-objects/Email';
 import { Password } from '../../domain/value-objects/Password';
+import { IAuth } from '../api/ApiUserRepository';
 
 export class MockUserRepository implements IUserRepository {
   private static instance: MockUserRepository;
@@ -13,7 +14,7 @@ export class MockUserRepository implements IUserRepository {
     password: Password.create('hashed_12345@aA')
   }];
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): MockUserRepository {
     if (!MockUserRepository.instance) {
@@ -21,7 +22,7 @@ export class MockUserRepository implements IUserRepository {
     }
     return MockUserRepository.instance;
   }
-  
+
   async save(user: User): Promise<void> {
     this.users.push(user);
   }
@@ -44,6 +45,12 @@ export class MockUserRepository implements IUserRepository {
   async delete(id: string): Promise<void> {
     this.users = this.users.filter(user => user.id !== id);
   }
+
+  async authenticate(email: string, password: string): Promise<IAuth> {
+    this.users.filter(user => user.email.value == email && user.password.value == password);
+    return { access_token: '', token_type: '' }
+  }
+
   public reset(): void {
     this.users = [];
   }

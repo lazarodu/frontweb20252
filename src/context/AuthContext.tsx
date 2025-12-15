@@ -3,6 +3,7 @@
 import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { makeUserUseCases } from '@/core/factories/makeUserUseCases';
 import { User } from '@/core/domain/entities/User';
+import { storageLocal } from '@/services/storageLocal';
 
 
 // Define the context type
@@ -29,11 +30,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, pass: string) => {
-    const foundUser = await userUseCases.loginUser.execute({ email, password: pass });
+    //const foundUser = await userUseCases.loginUser.execute({ email, password: pass });
+    const foundUser = await userUseCases.authUser.execute({ email, password: pass })
     if (foundUser) {
-      const {id, email, name} = foundUser
-      setUser(foundUser);
-      localStorage.setItem('user', JSON.stringify({id, email, name}));
+      //const { id, email, name } = foundUser
+      //setUser(foundUser);
+      //localStorage.setItem('user', JSON.stringify({ id, email, name }));
+      const token = foundUser.access_token.replaceAll(/"/g, '')
+      storageLocal.setItem('token', JSON.stringify(token))
+      const user = await userUseCases.findUserByEmail.execute({ email })
+      storageLocal.setItem('user', JSON.stringify(user))
       return true;
     }
     return false;
@@ -45,10 +51,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (name: string, email: string, pass: string) => {
-    const existingUser = await userUseCases.findUserByEmail.execute({ email })
-    if (existingUser) {
-      return false; // User already exists
-    }
+    /*    const existingUser = await userUseCases.findUserByEmail.execute({ email })
+        if (existingUser) {
+          return false; // User already exists
+        }*/
     await userUseCases.registerUser.execute({ name, email, password: pass })
     return true;
   };

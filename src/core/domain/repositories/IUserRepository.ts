@@ -1,3 +1,4 @@
+import { IAuth } from '@/core/infra/api/ApiUserRepository';
 import { User } from '../entities/User';
 
 export interface IUserRepository {
@@ -6,4 +7,5 @@ export interface IUserRepository {
   findById(id: string): Promise<User | null>;
   update(user: User): Promise<void>;
   delete(id: string): Promise<void>;
+  authenticate(email: string, password: string): Promise<IAuth>
 }
